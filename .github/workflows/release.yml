@@ -1,9 +1,7 @@
 name: Create Release
 
 on:
-  push:
-    tags-ignore:
-      - testing_*
+  workflow_dispatch
 
 jobs:
   build:
@@ -22,13 +20,24 @@ jobs:
         run: |
           Invoke-WebRequest -Uri https://goatcorp.github.io/dalamud-distrib/latest.zip -OutFile latest.zip
           Expand-Archive -Force latest.zip "$env:AppData\XIVLauncher\addon\Hooks\dev"
+      - name: Get next version
+        id: get_version
+        shell: pwsh
+        run: |
+          $repo = Get-Content -Raw './repo.json' | ConvertFrom-Json
+          $oldVersion = $repo[0].AssemblyVersion
+          $parts = $oldVersion -split '\.'
+          $patch = [int]$parts[3] + 1
+          $ver = "$($parts[0]).$($parts[1]).$($parts[2]).$patch"
+          echo "Next version: $ver"
+          echo "::set-output name=ver::$ver"
       - name: Build
         run: |
-          $ver = '${{ github.ref_name }}'
+          $ver = "${{ steps.get_version.outputs.ver }}"
           invoke-expression 'dotnet build --no-restore --configuration Release --nologo -p:Version=$ver -p:FileVersion=$ver -p:AssemblyVersion=$ver'
       - name: write version into jsons
         run: |
-          $ver = '${{ github.ref_name }}'
+          $ver = "${{ steps.get_version.outputs.ver }}"
           $path = './Penumbra/bin/Release/Penumbra.json'
           $json = Get-Content -Raw $path | ConvertFrom-Json
           $json.AssemblyVersion = $ver
@@ -64,7 +73,7 @@ jobs:
 
       - name: Write out repo.json
         run: |
-          $ver = '${{ github.ref_name }}'
+          $ver = "${{ steps.get_version.outputs.ver }}"
           $path = './repo.json'
           $json = Get-Content -Raw $path | ConvertFrom-Json
           $json[0].AssemblyVersion = $ver
@@ -83,5 +92,5 @@ jobs:
           git branch -f master ${{ github.sha }}
           git checkout master
           git add repo.json
-          git commit -m "[CI] Updating repo.json for ${{ github.ref_name }}" || true
+          git commit -m "[CI] Updating repo.json" || true
           git push origin master

@@ -159,8 +159,6 @@ public class ResourceTreeFactory(
         foreach (var node in tree.FlatNodes)
         {
             node.FullPathStatus = GetPathStatus(node.FullPath, onlyWithinPath);
-            if (node.FullPathStatus != ResourceNode.PathStatus.Valid)
-                node.FullPath = FullPath.Empty;
         }
 
         return;

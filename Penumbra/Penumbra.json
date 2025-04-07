@@ -5,12 +5,12 @@
     "Description": "Runtime mod loader and manager.",
     "InternalName": "Penumbra",
     "AssemblyVersion": "9.0.0.1",
-    "RepoUrl": "https://github.com/xivdev/Penumbra",
+    "RepoUrl": "https://github.com/FrizzleWizzMan/Penumbra",
     "ApplicableVersion": "any",
     "Tags": [ "modding" ],
     "DalamudApiLevel": 12,
     "LoadPriority": 69420,
     "LoadRequiredState": 2,
     "LoadSync": true,
-    "IconUrl": "https://raw.githubusercontent.com/xivdev/Penumbra/master/images/icon.png"
+    "IconUrl": "https://raw.githubusercontent.com/FrizzleWizzMan/Penumbra/master/images/icon.png"
 }
